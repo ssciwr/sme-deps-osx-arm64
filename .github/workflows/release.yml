@@ -4,6 +4,8 @@ on: push
 
 env:
   LLVM_VERSION: "17.0.4"
+  QT_VERSION: "v6.6.0"
+  ZLIB_VERSION: "v1.3"
   DUNE_COPASI_VERSION: "ci_fixes_for_dune_copasi_2"
 
 jobs:
@@ -15,15 +17,15 @@ jobs:
       SUDOCMD: "sudo -E"
       MACOSX_DEPLOYMENT_TARGET: "11"
       TARGET_TRIPLE: "aarch64-apple-darwin20.1.0"
-      PYTHON_EXE: "/opt/homebrew/bin/python3"
+      PYTHON_EXE: "/opt/homebrew/bin/python3.12"
       OS_TARGET: "osx-arm64"
     defaults:
       run:
         shell: bash
     steps:
       - uses: actions/checkout@v4
-      - name: LLVM
-        run: ./llvm.sh
+      - run: ./llvm.sh
+      - run: ./qt.sh
       - uses: actions/upload-artifact@v3
         with:
           path: ./artefacts/*
