@@ -50,6 +50,9 @@ jobs:
         shell: bash
     steps:
       - uses: actions/checkout@v4
+      - uses: maxim-lobanov/setup-xcode@v1
+        with:
+          xcode-version: "14.3"
       - run: ./llvm.sh
       - run: ./qt.sh
       - run: ./common.sh
