@@ -4,8 +4,6 @@ set -e -x
 
 BUILD_DIR=`pwd`
 
-brew install python make wget
-
 echo "LLVM_VERSION = $LLVM_VERSION"
 echo "TARGET_TRIPLE = $TARGET_TRIPLE"
 echo "INSTALL_PREFIX = $INSTALL_PREFIX"
