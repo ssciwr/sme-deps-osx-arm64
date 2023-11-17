@@ -35,7 +35,7 @@ This repo provides the following statically compiled libraries:
 
 Get the latest versions here:
 
-- osx-arm64 (Xcode 14.3 / macOS 13): [sme_deps_osx.tgz](https://github.com/spatial-model-editor/sme_deps/releases/latest/download/sme_deps_osx-arm64.tgz)
+- osx-arm64 (Xcode 14.3 / macOS 13): [sme_deps_osx.tgz](https://github.com/ssciwr/sme-deps-osx-arm64/releases/latest/download/sme_deps_osx-arm64.tgz)
 
 ## Updating this repo
 
