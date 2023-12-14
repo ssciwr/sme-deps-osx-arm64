@@ -85,6 +85,8 @@ cmake -G "Unix Makefiles" .. \
     -DCMAKE_C_FLAGS="-fpic -fvisibility=hidden" \
     -DCMAKE_CXX_FLAGS="-fpic -fvisibility=hidden" \
     -DCMAKE_INSTALL_PREFIX="$INSTALL_PREFIX" \
+    -DZLIB_INCLUDE_DIR=${INSTALL_PREFIX}/include \
+    -DZLIB_LIBRARY_RELEASE=${INSTALL_PREFIX}/lib/libz.a \
     -DWITH_QT6=ON
 time make -j$NPROCS
 $SUDOCMD make install
@@ -572,9 +574,15 @@ cmake -G "Unix Makefiles" .. \
     -DVTK_MODULE_ENABLE_VTK_GUISupportQt=YES \
     -DVTK_MODULE_ENABLE_VTK_RenderingQt=YES \
     -DVTK_MODULE_USE_EXTERNAL_VTK_expat=ON \
+    -DEXPAT_INCLUDE_DIR=$INSTALL_PREFIX/include \
+    -DEXPAT_LIBRARY=$INSTALL_PREFIX/lib/libexpat.a \
     -DVTK_MODULE_USE_EXTERNAL_VTK_fmt=ON \
     -DVTK_MODULE_USE_EXTERNAL_VTK_tiff=ON \
+    -DTIFF_INCLUDE_DIR=${INSTALL_PREFIX}/include \
+    -DTIFF_LIBRARY_RELEASE=${INSTALL_PREFIX}/lib/libtiff.a \
     -DVTK_MODULE_USE_EXTERNAL_VTK_zlib=ON \
+    -DZLIB_INCLUDE_DIR=${INSTALL_PREFIX}/include \
+    -DZLIB_LIBRARY_RELEASE=${INSTALL_PREFIX}/lib/libz.a \
     -DVTK_LEGACY_REMOVE=ON \
     -DVTK_USE_FUTURE_CONST=ON \
     -DVTK_USE_FUTURE_BOOL=ON \
