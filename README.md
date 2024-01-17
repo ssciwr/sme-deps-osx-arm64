@@ -30,6 +30,7 @@ This repo provides the following statically compiled libraries:
 - [libCombine](https://github.com/sbmlteam/libCombine)
 - [function2](https://github.com/Naios/function2)
 - [VTK](https://gitlab.kitware.com/vtk/vtk)
+- [METIS](https://github.com/KarypisLab/METIS)
 - [LLVM](https://llvm.org/)
 - [Qt](https://doc.qt.io/)
 - [dune-copasi](https://gitlab.dune-project.org/copasi/dune-copasi)

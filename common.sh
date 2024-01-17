@@ -31,11 +31,23 @@ echo "ZIPPER_VERSION: ${ZIPPER_VERSION}"
 echo "COMBINE_VERSION: ${COMBINE_VERSION}"
 echo "FUNCTION2_VERSION: ${FUNCTION2_VERSION}"
 echo "VTK_VERSION: ${VTK_VERSION}"
+echo "METIS_VERSION: ${METIS_VERSION}"
 
 NPROCS=4
 echo "NPROCS: ${NPROCS}"
 echo "PATH: ${PATH}"
 echo "SUDOCMD: ${SUDOCMD}"
+
+# METIS (including GKLib as submodule: note submodule *not* included in v5.2.1 where you get separate static libs)
+git clone -b $METIS_VERSION --depth 1 --recursive https://github.com/KarypisLab/METIS.git
+cd METIS/GKlib
+# patch to remove "-Werror -march=native", add "-fpic -fvisibility=hidden"
+git apply --ignore-space-change --ignore-whitespace --verbose ../../metis_gklib.diff
+cd ..
+make config prefix="$INSTALL_PREFIX"
+time make -j$NPROCS
+$SUDOCMD make install
+cd ../
 
 # install function2 headers
 git clone -b $FUNCTION2_VERSION --depth 1 https://github.com/Naios/function2.git
