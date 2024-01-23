@@ -55,6 +55,9 @@ jobs:
       - uses: maxim-lobanov/setup-xcode@v1
         with:
           xcode-version: "14.3"
+      - run: |
+          brew install bison flex
+          echo "/opt/homebrew/opt/bison/bin:/opt/homebrew/opt/flex/bin:$PATH" >> $GITHUB_PATH
       - run: ./llvm.sh
       - run: ./qt.sh
       - run: ./common.sh
