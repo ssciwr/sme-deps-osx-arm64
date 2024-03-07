@@ -427,6 +427,9 @@ cd ../../
 # build static version of libTIFF
 git clone -b $LIBTIFF_VERSION --depth 1 https://gitlab.com/libtiff/libtiff.git
 cd libtiff
+# get patch for cmake CMath issue
+wget https://gitlab.com/libtiff/libtiff/-/commit/67f73084ca824e6c2465c47a5b67b16b5beca569.diff
+git apply --ignore-space-change --ignore-whitespace --verbose 67f73084ca824e6c2465c47a5b67b16b5beca569.diff
 mkdir cmake-build
 cd cmake-build
 cmake -G "Unix Makefiles" .. \
