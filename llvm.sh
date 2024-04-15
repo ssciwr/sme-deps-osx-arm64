@@ -33,6 +33,7 @@ cmake -GNinja .. \
     -DPython3_EXECUTABLE=$PYTHON_EXE \
     -DCMAKE_INSTALL_PREFIX=$INSTALL_PREFIX \
     -DCMAKE_BUILD_TYPE=Release \
+    -DCMAKE_CXX_COMPILER_LAUNCHER=ccache \
     -DLLVM_DEFAULT_TARGET_TRIPLE=$TARGET_TRIPLE \
     -DCMAKE_OSX_DEPLOYMENT_TARGET=$MACOSX_DEPLOYMENT_TARGET \
     -DLLVM_TARGETS_TO_BUILD="AArch64" \
@@ -63,7 +64,4 @@ ls
 ninja
 $SUDOCMD ninja install
 
-# cd ../..
-# mkdir artefacts
-# cd artefacts
-# tar -zcvf sme_deps_llvm_$OS.tgz $INSTALL_PREFIX/*
+ccache --show-stats

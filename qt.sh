@@ -24,6 +24,7 @@ cd build
 cmake -G "Ninja" .. \
     -DCMAKE_OSX_DEPLOYMENT_TARGET="$MACOSX_DEPLOYMENT_TARGET" \
     -DCMAKE_BUILD_TYPE=Release \
+    -DCMAKE_CXX_COMPILER_LAUNCHER=ccache \
     -DBUILD_SHARED_LIBS=OFF \
     -DCMAKE_C_FLAGS="-fpic -fvisibility=hidden" \
     -DCMAKE_CXX_FLAGS="-fpic -fvisibility=hidden" \
@@ -55,6 +56,7 @@ cmake ../qt5/qtbase -G "Ninja" \
     -DBUILD_SHARED_LIBS=OFF \
     -DCMAKE_BUILD_TYPE=Release \
     -DCMAKE_INSTALL_PREFIX=${INSTALL_PREFIX} \
+    -DCMAKE_CXX_COMPILER_LAUNCHER=ccache \
     -DCMAKE_MESSAGE_LOG_LEVEL=STATUS \
     -DFEATURE_system_doubleconversion=OFF \
     -DFEATURE_system_harfbuzz=OFF \
@@ -81,3 +83,5 @@ $SUDOCMD ninja install
 cd ../..
 
 $INSTALL_PREFIX/bin/qmake -v
+
+ccache --show-stats

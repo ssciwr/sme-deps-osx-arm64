@@ -33,21 +33,20 @@ echo "FUNCTION2_VERSION: ${FUNCTION2_VERSION}"
 echo "VTK_VERSION: ${VTK_VERSION}"
 echo "SCOTCH_VERSION: ${SCOTCH_VERSION}"
 
-NPROCS=4
-echo "NPROCS: ${NPROCS}"
 echo "PATH: ${PATH}"
 echo "SUDOCMD: ${SUDOCMD}"
+NPROCS=5
 
 # install function2 headers
 git clone -b $FUNCTION2_VERSION --depth 1 https://github.com/Naios/function2.git
 cd function2
 mkdir build
 cd build
-cmake -G "Unix Makefiles" .. \
+cmake -GNinja .. \
     -DCMAKE_BUILD_TYPE=Release \
     -DBUILD_TESTING=OFF \
     -DCMAKE_INSTALL_PREFIX="$INSTALL_PREFIX"
-$SUDOCMD make install
+$SUDOCMD ninja install
 cd ../../
 
 # build static version of bzip2
@@ -66,10 +65,10 @@ git clone -b $CEREAL_VERSION --depth 1 https://github.com/USCiLab/cereal.git
 cd cereal
 mkdir build
 cd build
-cmake -G "Unix Makefiles" .. \
+cmake -GNinja .. \
     -DCMAKE_INSTALL_PREFIX="$INSTALL_PREFIX" \
     -DJUST_INSTALL_CEREAL=ON
-$SUDOCMD make install
+$SUDOCMD ninja install
 cd ../../
 
 # build static version of QCustomPlot (using our own cmakelists)
@@ -79,9 +78,10 @@ cp qcustomplot-source/* qcustomplot/.
 cd qcustomplot
 mkdir build
 cd build
-cmake -G "Unix Makefiles" .. \
+cmake -GNinja .. \
     -DCMAKE_OSX_DEPLOYMENT_TARGET="${MACOSX_DEPLOYMENT_TARGET}" \
     -DCMAKE_BUILD_TYPE=Release \
+    -DCMAKE_CXX_COMPILER_LAUNCHER=ccache \
     -DBUILD_SHARED_LIBS=OFF \
     -DCMAKE_C_FLAGS="-fpic -fvisibility=hidden" \
     -DCMAKE_CXX_FLAGS="-fpic -fvisibility=hidden" \
@@ -89,8 +89,8 @@ cmake -G "Unix Makefiles" .. \
     -DZLIB_INCLUDE_DIR=${INSTALL_PREFIX}/include \
     -DZLIB_LIBRARY_RELEASE=${INSTALL_PREFIX}/lib/libz.a \
     -DWITH_QT6=ON
-time make -j$NPROCS
-$SUDOCMD make install
+time ninja
+$SUDOCMD ninja install
 cd ../../
 
 # build static version of boost serialization & install headers
@@ -106,18 +106,19 @@ git clone -b $BENCHMARK_VERSION --depth 1 https://github.com/google/benchmark.gi
 cd benchmark
 mkdir build
 cd build
-cmake -G "Unix Makefiles" .. \
+cmake -GNinja .. \
     -DCMAKE_OSX_DEPLOYMENT_TARGET="${MACOSX_DEPLOYMENT_TARGET}" \
     -DCMAKE_BUILD_TYPE=Release \
+    -DCMAKE_CXX_COMPILER_LAUNCHER=ccache \
     -DBUILD_SHARED_LIBS=OFF \
     -DCMAKE_C_FLAGS="-fpic -fvisibility=hidden" \
     -DCMAKE_CXX_FLAGS="-fpic -fvisibility=hidden" \
     -DCMAKE_INSTALL_PREFIX="$INSTALL_PREFIX" \
     -DBENCHMARK_ENABLE_WERROR=OFF \
     -DBENCHMARK_ENABLE_TESTING=OFF
-time make -j$NPROCS
+time ninja
 #make test
-$SUDOCMD make install
+$SUDOCMD ninja install
 cd ../../
 
 # build static version of Catch2 library
@@ -125,9 +126,10 @@ git clone -b $CATCH2_VERSION --depth 1 https://github.com/catchorg/Catch2.git
 cd Catch2
 mkdir build
 cd build
-cmake -G "Unix Makefiles" .. \
+cmake -GNinja .. \
     -DCMAKE_OSX_DEPLOYMENT_TARGET="${MACOSX_DEPLOYMENT_TARGET}" \
     -DCMAKE_BUILD_TYPE=Release \
+    -DCMAKE_CXX_COMPILER_LAUNCHER=ccache \
     -DBUILD_SHARED_LIBS=OFF \
     -DCMAKE_C_FLAGS="-fpic -fvisibility=hidden" \
     -DCMAKE_CXX_FLAGS="-fpic -fvisibility=hidden" \
@@ -135,9 +137,9 @@ cmake -G "Unix Makefiles" .. \
     -DBUILD_SHARED_LIBS=OFF \
     -DCATCH_INSTALL_DOCS=OFF \
     -DCATCH_INSTALL_EXTRAS=ON
-time make -j$NPROCS
+time ninja
 #make test
-$SUDOCMD make install
+$SUDOCMD ninja install
 cd ../../
 
 # build static version of opencv library
@@ -145,9 +147,10 @@ git clone -b $OPENCV_VERSION --depth 1 https://github.com/opencv/opencv.git
 cd opencv
 mkdir build
 cd build
-cmake -G "Unix Makefiles" .. \
+cmake -GNinja .. \
     -DCMAKE_OSX_DEPLOYMENT_TARGET="${MACOSX_DEPLOYMENT_TARGET}" \
     -DCMAKE_BUILD_TYPE=Release \
+    -DCMAKE_CXX_COMPILER_LAUNCHER=ccache \
     -DBUILD_SHARED_LIBS=OFF \
     -DCMAKE_C_FLAGS="-fpic -fvisibility=hidden" \
     -DCMAKE_CXX_FLAGS="-fpic -fvisibility=hidden" \
@@ -256,21 +259,20 @@ cmake -G "Unix Makefiles" .. \
     -DWITH_XINE:BOOL=OFF \
     -DZLIB_INCLUDE_DIR=$INSTALL_PREFIX/include \
     -DZLIB_LIBRARY_RELEASE=$INSTALL_PREFIX/lib/libz.a
-time make -j$NPROCS
+time ninja
 #make test
-$SUDOCMD make install
+$SUDOCMD ninja install
 cd ../../
 
 # build static version of oneTBB
-# use temporary fork until https://github.com/oneapi-src/oneTBB/pull/1248 is merged & included in a release
-# upstream repo is oneapi-src
-git clone -b $TBB_VERSION --depth 1 https://github.com/lkeegan/oneTBB.git
+git clone -b $TBB_VERSION --depth 1 https://github.com/oneapi-src/oneTBB.git
 cd oneTBB
 mkdir build
 cd build
-cmake -G "Unix Makefiles" .. \
+cmake -GNinja .. \
     -DCMAKE_OSX_DEPLOYMENT_TARGET="${MACOSX_DEPLOYMENT_TARGET}" \
     -DCMAKE_BUILD_TYPE=Release \
+    -DCMAKE_CXX_COMPILER_LAUNCHER=ccache \
     -DBUILD_SHARED_LIBS=OFF \
     -DCMAKE_C_FLAGS="-fpic -fvisibility=hidden" \
     -DCMAKE_CXX_FLAGS="-fpic -fvisibility=hidden" \
@@ -278,9 +280,9 @@ cmake -G "Unix Makefiles" .. \
     -DTBB_ENABLE_IPO="$TBB_ENABLE_IPO" \
     -DTBB_STRICT=OFF \
     -DTBB_TEST=OFF
-VERBOSE=1 time make tbb -j$NPROCS
+VERBOSE=1 time ninja tbb
 #time make test
-$SUDOCMD make install
+$SUDOCMD ninja install
 cd ../../
 
 # build static version of oneDPL
@@ -288,17 +290,18 @@ git clone -b $DPL_VERSION --depth 1 https://github.com/oneapi-src/oneDPL
 cd oneDPL
 mkdir build
 cd build
-cmake -G "Unix Makefiles" .. \
+cmake -GNinja .. \
     -DCMAKE_OSX_DEPLOYMENT_TARGET="${MACOSX_DEPLOYMENT_TARGET}" \
     -DCMAKE_BUILD_TYPE=Release \
+    -DCMAKE_CXX_COMPILER_LAUNCHER=ccache \
     -DBUILD_SHARED_LIBS=OFF \
     -DCMAKE_C_FLAGS="-fpic -fvisibility=hidden" \
     -DCMAKE_CXX_FLAGS="-fpic -fvisibility=hidden" \
     -DCMAKE_PREFIX_PATH="$INSTALL_PREFIX" \
     -DCMAKE_INSTALL_PREFIX="$INSTALL_PREFIX" \
     -DONEDPL_BACKEND="tbb"
-make
-$SUDOCMD make install
+ninja
+$SUDOCMD ninja install
 cd ../../
 
 # build static version of pagmo
@@ -306,9 +309,10 @@ git clone -b $PAGMO_VERSION --depth 1 https://github.com/esa/pagmo2.git
 cd pagmo2
 mkdir build
 cd build
-cmake -G "Unix Makefiles" .. \
+cmake -GNinja .. \
     -DCMAKE_OSX_DEPLOYMENT_TARGET="${MACOSX_DEPLOYMENT_TARGET}" \
     -DCMAKE_BUILD_TYPE=Release \
+    -DCMAKE_CXX_COMPILER_LAUNCHER=ccache \
     -DBUILD_SHARED_LIBS=OFF \
     -DCMAKE_C_FLAGS="-fpic -fvisibility=hidden" \
     -DCMAKE_CXX_FLAGS="-fpic -fvisibility=hidden" \
@@ -316,9 +320,9 @@ cmake -G "Unix Makefiles" .. \
     -DCMAKE_PREFIX_PATH="$INSTALL_PREFIX" \
     -DPAGMO_BUILD_STATIC_LIBRARY=ON \
     -DPAGMO_BUILD_TESTS=OFF
-VERBOSE=1 time make -j$NPROCS
+VERBOSE=1 time ninja
 #time make test
-$SUDOCMD make install
+$SUDOCMD ninja install
 cd ../../
 
 # build static version of expat xml library
@@ -326,9 +330,10 @@ git clone -b $LIBEXPAT_VERSION --depth 1 https://github.com/libexpat/libexpat.gi
 cd libexpat
 mkdir build
 cd build
-cmake -G "Unix Makefiles" ../expat \
+cmake -GNinja ../expat \
     -DCMAKE_OSX_DEPLOYMENT_TARGET="${MACOSX_DEPLOYMENT_TARGET}" \
     -DCMAKE_BUILD_TYPE=Release \
+    -DCMAKE_CXX_COMPILER_LAUNCHER=ccache \
     -DBUILD_SHARED_LIBS=OFF \
     -DCMAKE_C_FLAGS="-fpic -fvisibility=hidden" \
     -DCMAKE_CXX_FLAGS="-fpic -fvisibility=hidden" \
@@ -338,9 +343,9 @@ cmake -G "Unix Makefiles" ../expat \
     -DEXPAT_BUILD_TOOLS=OFF \
     -DEXPAT_SHARED_LIBS=OFF \
     -DEXPAT_BUILD_TESTS:BOOL=OFF
-time make -j$NPROCS
+time ninja
 #make test
-$SUDOCMD make install
+$SUDOCMD ninja install
 cd ../../
 
 # build static version of libSBML including spatial extension
@@ -349,9 +354,10 @@ cd libsbml
 git status
 mkdir build
 cd build
-cmake -G "Unix Makefiles" .. \
+cmake -GNinja .. \
     -DCMAKE_OSX_DEPLOYMENT_TARGET="${MACOSX_DEPLOYMENT_TARGET}" \
     -DCMAKE_BUILD_TYPE=Release \
+    -DCMAKE_CXX_COMPILER_LAUNCHER=ccache \
     -DBUILD_SHARED_LIBS=OFF \
     -DCMAKE_C_FLAGS="-fpic -fvisibility=hidden" \
     -DCMAKE_CXX_FLAGS="-fpic -fvisibility=hidden" \
@@ -372,8 +378,8 @@ cmake -G "Unix Makefiles" .. \
     -DWITH_EXPAT=ON \
     -DEXPAT_INCLUDE_DIR=$INSTALL_PREFIX/include \
     -DEXPAT_LIBRARY=$INSTALL_PREFIX/lib/libexpat.a
-time make -j$NPROCS
-$SUDOCMD make install
+time ninja
+$SUDOCMD ninja install
 cd ../../
 
 # libCombine
@@ -386,9 +392,10 @@ git checkout $ZIPPER_VERSION
 cd ../../
 mkdir build
 cd build
-cmake -G "Unix Makefiles" .. \
+cmake -GNinja .. \
     -DCMAKE_OSX_DEPLOYMENT_TARGET="${MACOSX_DEPLOYMENT_TARGET}" \
     -DCMAKE_BUILD_TYPE=Release \
+    -DCMAKE_CXX_COMPILER_LAUNCHER=ccache \
     -DBUILD_SHARED_LIBS=OFF \
     -DCMAKE_C_FLAGS="-fpic -fvisibility=hidden" \
     -DCMAKE_CXX_FLAGS="-fpic -fvisibility=hidden" \
@@ -399,9 +406,9 @@ cmake -G "Unix Makefiles" .. \
     -DEXTRA_LIBS="$BOOST_INSTALL_PREFIX/lib/libz.a;$BOOST_INSTALL_PREFIX/lib/libbz2.a;$BOOST_INSTALL_PREFIX/lib/libexpat.a" \
     -DZLIB_INCLUDE_DIR=$BOOST_INSTALL_PREFIX/include \
     -DZLIB_LIBRARY=$BOOST_INSTALL_PREFIX/lib/libz.a
-time make -j$NPROCS
-make test
-$SUDOCMD make install
+time ninja
+# make test
+$SUDOCMD ninja install
 cd ../../
 
 # build static version of fmt
@@ -409,9 +416,10 @@ git clone -b $FMT_VERSION --depth 1 https://github.com/fmtlib/fmt.git
 cd fmt
 mkdir build
 cd build
-cmake -G "Unix Makefiles" .. \
+cmake -GNinja .. \
     -DCMAKE_OSX_DEPLOYMENT_TARGET="${MACOSX_DEPLOYMENT_TARGET}" \
     -DCMAKE_BUILD_TYPE=Release \
+    -DCMAKE_CXX_COMPILER_LAUNCHER=ccache \
     -DBUILD_SHARED_LIBS=OFF \
     -DCMAKE_C_FLAGS="-fpic -fvisibility=hidden" \
     -DCMAKE_CXX_FLAGS="-fpic -fvisibility=hidden" \
@@ -419,9 +427,9 @@ cmake -G "Unix Makefiles" .. \
     -DCMAKE_CXX_STANDARD=17 \
     -DFMT_DOC=OFF \
     -DFMT_TEST:BOOL=OFF
-time make -j$NPROCS
+time ninja
 #make test
-$SUDOCMD make install
+$SUDOCMD ninja install
 cd ../../
 
 # build static version of libTIFF
@@ -432,9 +440,10 @@ wget https://gitlab.com/libtiff/libtiff/-/commit/67f73084ca824e6c2465c47a5b67b16
 git apply --ignore-space-change --ignore-whitespace --verbose 67f73084ca824e6c2465c47a5b67b16b5beca569.diff
 mkdir cmake-build
 cd cmake-build
-cmake -G "Unix Makefiles" .. \
+cmake -GNinja .. \
     -DCMAKE_OSX_DEPLOYMENT_TARGET="${MACOSX_DEPLOYMENT_TARGET}" \
     -DCMAKE_BUILD_TYPE=Release \
+    -DCMAKE_CXX_COMPILER_LAUNCHER=ccache \
     -DBUILD_SHARED_LIBS=OFF \
     -DCMAKE_C_FLAGS="-fpic -fvisibility=hidden" \
     -DCMAKE_CXX_FLAGS="-fpic -fvisibility=hidden" \
@@ -452,9 +461,9 @@ cmake -G "Unix Makefiles" .. \
     -Dzlib=OFF \
     -DGLUT_INCLUDE_DIR=GLUT_INCLUDE_DIR-NOTFOUND \
     -DOPENGL_INCLUDE_DIR=OPENGL_INCLUDE_DIR-NOTFOUND
-time make -j$NPROCS
+time ninja
 #make test
-$SUDOCMD make install
+$SUDOCMD ninja install
 cd ../../
 
 # build static version of spdlog
@@ -462,9 +471,10 @@ git clone -b $SPDLOG_VERSION --depth 1 https://github.com/gabime/spdlog.git
 cd spdlog
 mkdir build
 cd build
-cmake -G "Unix Makefiles" .. \
+cmake -GNinja .. \
     -DCMAKE_OSX_DEPLOYMENT_TARGET="${MACOSX_DEPLOYMENT_TARGET}" \
     -DCMAKE_BUILD_TYPE=Release \
+    -DCMAKE_CXX_COMPILER_LAUNCHER=ccache \
     -DBUILD_SHARED_LIBS=OFF \
     -DCMAKE_C_FLAGS="-fpic -fvisibility=hidden" \
     -DCMAKE_CXX_FLAGS="-fpic -fvisibility=hidden" \
@@ -475,9 +485,9 @@ cmake -G "Unix Makefiles" .. \
     -DSPDLOG_NO_THREAD_ID=ON \
     -DSPDLOG_NO_ATOMIC_LEVELS=ON \
     -DCMAKE_PREFIX_PATH=$INSTALL_PREFIX
-time make -j$NPROCS
+time ninja
 #make test
-$SUDOCMD make install
+$SUDOCMD ninja install
 cd ../../
 
 # build static version of gmp
@@ -523,16 +533,17 @@ git clone -b $CGAL_VERSION --depth 1 https://github.com/CGAL/cgal.git
 cd cgal
 mkdir build
 cd build
-cmake -G "Unix Makefiles" .. \
+cmake -GNinja .. \
     -DCMAKE_OSX_DEPLOYMENT_TARGET="${MACOSX_DEPLOYMENT_TARGET}" \
     -DCMAKE_BUILD_TYPE=Release \
+    -DCMAKE_CXX_COMPILER_LAUNCHER=ccache \
     -DBUILD_SHARED_LIBS=OFF \
     -DCMAKE_C_FLAGS="-fpic -fvisibility=hidden" \
     -DCMAKE_CXX_FLAGS="-fpic -fvisibility=hidden" \
     -DCMAKE_INSTALL_PREFIX="$INSTALL_PREFIX" \
     -DWITH_CGAL_ImageIO=OFF \
     -DWITH_CGAL_Qt5=OFF
-$SUDOCMD make install
+$SUDOCMD ninja install
 cd ../../
 
 # build static version of symengine
@@ -540,9 +551,10 @@ git clone -b $SYMENGINE_VERSION --depth 1 https://github.com/symengine/symengine
 cd symengine
 mkdir build
 cd build
-cmake -G "Unix Makefiles" .. \
+cmake -GNinja .. \
     -DCMAKE_OSX_DEPLOYMENT_TARGET="${MACOSX_DEPLOYMENT_TARGET}" \
     -DCMAKE_BUILD_TYPE=Release \
+    -DCMAKE_CXX_COMPILER_LAUNCHER=ccache \
     -DBUILD_SHARED_LIBS=OFF \
     -DCMAKE_C_FLAGS="-fpic -fvisibility=hidden" \
     -DCMAKE_CXX_FLAGS="-fpic -fvisibility=hidden" \
@@ -556,9 +568,9 @@ cmake -G "Unix Makefiles" .. \
     -DWITH_SYSTEM_CEREAL=ON \
     -DWITH_SYMENGINE_THREAD_SAFE=ON \
     -DBUILD_TESTS=OFF
-time make -j$NPROCS
+time ninja
 #time make test
-$SUDOCMD make install
+$SUDOCMD ninja install
 cd ../../
 
 # build minimal static version of VTK including GUISupportQt module
@@ -566,9 +578,10 @@ git clone -b $VTK_VERSION --depth 1 https://github.com/Kitware/VTK.git
 cd VTK
 mkdir build
 cd build
-cmake -G "Unix Makefiles" .. \
+cmake -GNinja .. \
     -DCMAKE_OSX_DEPLOYMENT_TARGET="${MACOSX_DEPLOYMENT_TARGET}" \
     -DCMAKE_BUILD_TYPE=Release \
+    -DCMAKE_CXX_COMPILER_LAUNCHER=ccache \
     -DBUILD_SHARED_LIBS=OFF \
     -DCMAKE_C_FLAGS="-fpic -fvisibility=hidden" \
     -DCMAKE_CXX_FLAGS="-fpic -fvisibility=hidden" \
@@ -598,9 +611,9 @@ cmake -G "Unix Makefiles" .. \
     -DVTK_USE_CUDA=OFF \
     -DVTK_USE_MPI=OFF \
     -DVTK_ENABLE_WRAPPING=OFF
-time make -j$NPROCS
+time ninja
 #make test
-$SUDOCMD make install
+$SUDOCMD ninja install
 cd ../../
 
 
@@ -610,9 +623,10 @@ cd scotch
 git apply --ignore-space-change --ignore-whitespace --verbose ../scotch.diff
 mkdir build
 cd build
-cmake -G "Unix Makefiles" .. \
+cmake -GNinja .. \
     -DCMAKE_OSX_DEPLOYMENT_TARGET="${MACOSX_DEPLOYMENT_TARGET}" \
     -DCMAKE_BUILD_TYPE=Release \
+    -DCMAKE_CXX_COMPILER_LAUNCHER=ccache \
     -DBUILD_SHARED_LIBS=OFF \
     -DCMAKE_C_FLAGS="-fpic -fvisibility=hidden" \
     -DCMAKE_CXX_FLAGS="-fpic -fvisibility=hidden" \
@@ -627,6 +641,8 @@ cmake -G "Unix Makefiles" .. \
     -DUSE_BZ2=ON \
     -DBZIP2_INCLUDE_DIR=$INSTALL_PREFIX/include \
     -DBZIP2_LIBRARY_RELEASE=$INSTALL_PREFIX/lib/libbz2.a
-time make -j$NPROCS
-$SUDOCMD make install
+time ninja
+$SUDOCMD ninja install
 cd ../../
+
+ccache --show-stats

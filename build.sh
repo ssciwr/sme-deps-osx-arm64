@@ -12,7 +12,8 @@ echo "MSYSTEM: $MSYSTEM"
 # export vars for duneopts script to read
 export CMAKE_OSX_DEPLOYMENT_TARGET="${MACOSX_DEPLOYMENT_TARGET}"
 export CMAKE_INSTALL_PREFIX=$DEPSDIR
-export MAKE_OPTIONS="-j4 VERBOSE=1"
+export CMAKE_GENERATOR=Ninja
+export CMAKE_CXX_COMPILER_LAUNCHER=ccache
 # disable gcc 10 pstl TBB backend as it uses the old TBB API
 export CMAKE_CXX_FLAGS="'-fvisibility=hidden -D_GLIBCXX_USE_TBB_PAR_BACKEND=0 -DNDEBUG'"
 export BUILD_SHARED_LIBS=OFF
@@ -23,11 +24,6 @@ export DUNE_COPASI_DISABLE_FETCH_PACKAGE_ExprTk=ON
 export DUNE_COPASI_DISABLE_FETCH_PACKAGE_parafields=ON
 # build dune-copasi with 2d and 3d support
 export DUNE_COPASI_GRID_DIMENSIONS='"2;3"'
-if [[ $MSYSTEM ]]; then
-    # on windows add flags to support large object files
-    # https://stackoverflow.com/questions/16596876/object-file-has-too-many-sections
-    export CMAKE_CXX_FLAGS='-fvisibility=hidden -Wa,-mbig-obj'
-fi
 
 # clone dune-copasi
 git clone -b ${DUNE_COPASI_VERSION} --depth 1 https://gitlab.dune-project.org/copasi/dune-copasi.git
@@ -59,6 +55,8 @@ cat ${INSTALL_PREFIX}/share/dune/cmake/modules/DunePythonCommonMacros.cmake
 /opt/smelibs/bin/dune-copasi --help
 
 otool -L /opt/smelibs/bin/dune-copasi
+
+ccache --show-stats
 
 ls $DEPSDIR
 mkdir artefacts
